@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Join Luna 🌙✨ Create Your Account{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <!-- Celestial background ambient orbs -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <div class="auth-card glass-panel animate-fade-in">
+        <div class="auth-header">
+            <div class="brand-badge">
+                <span class="moon-logo">🌙</span>
+                <span class="sparkle-star sparkle-1">✦</span>
+                <span class="sparkle-star sparkle-2">✦</span>
+            </div>
+            <h1 class="brand-title">Meet Luna</h1>
+            <p class="brand-subtitle">Set up your private space with multiple free AI models ✨</p>
+        </div>
+
+        <form action="{{ url_for('register') }}" method="POST" class="auth-form" id="registerForm">
+            <div class="form-group">
+                <label for="username">Username <span class="required">*</span></label>
+                <div class="input-with-icon">
+                    <i class="fa-regular fa-user input-icon"></i>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        value="{{ username or '' }}" 
+                        placeholder="Choose a cute username" 
+                        required 
+                        autocomplete="username"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="preferred_name">How should Luna call you? (Nickname)</label>
+                <div class="input-with-icon">
+                    <i class="fa-regular fa-heart input-icon"></i>
+                    <input 
+                        type="text" 
+                        id="preferred_name" 
+                        name="preferred_name" 
+                        value="{{ preferred_name or '' }}" 
+                        placeholder="e.g. Pari, Angel, Bestie, Queen 🌸" 
+                        autocomplete="name"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <div class="input-with-icon">
+                    <i class="fa-regular fa-envelope input-icon"></i>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        value="{{ email or '' }}" 
+                        placeholder="you@domain.com" 
+                        required 
+                        autocomplete="email"
+                    >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password <span class="required">*</span></label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-lock input-icon"></i>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="At least 6 characters" 
+                        required 
+                        minlength="6"
+                        autocomplete="new-password"
+                    >
+                    <button type="button" class="password-toggle" onclick="togglePasswordVisibility('password', this)" title="Show/Hide Password">
+                        <i class="fa-regular fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block shadow-glow">
+                <span>Create My Luna Account</span>
+                <i class="fa-solid fa-sparkles"></i>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}" class="link-highlight">Sign In 🌸</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePasswordVisibility(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+{% endblock %}

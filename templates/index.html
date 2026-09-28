@@ -1,0 +1,495 @@
+{% extends "base.html" %}
+
+{% block title %}Luna 🌙✨ Aesthetic AI Chat{% endblock %}
+
+{% block content %}
+<div class="app-layout" id="appLayout">
+    <!-- Ambient Celestial Glows -->
+    <div class="ambient-glow glow-chat-1"></div>
+    <div class="ambient-glow glow-chat-2"></div>
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <div class="sidebar-brand">
+                <span class="brand-icon">🌙</span>
+                <span class="brand-text">Luna <span class="brand-sparkle">AI</span></span>
+            </div>
+            <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- New Chat Button -->
+        <div class="sidebar-action">
+            <button class="btn btn-new-chat shadow-glow" id="newChatBtn">
+                <i class="fa-solid fa-plus"></i>
+                <span>New Chat</span>
+                <span class="shortcut-tag">Ctrl+K</span>
+            </button>
+        </div>
+
+        <!-- Search bar for conversations -->
+        <div class="sidebar-search">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="chatSearchInput" placeholder="Search chats..." autocomplete="off">
+        </div>
+
+        <!-- Conversation History List -->
+        <div class="sidebar-history custom-scrollbar" id="conversationsList">
+            <!-- Dynamic groups injected via JS (Today, Yesterday, Previous 7 Days, etc.) -->
+            <div class="history-loading">
+                <span class="mini-spinner"></span>
+                <span>Gathering memories...</span>
+            </div>
+        </div>
+
+        <!-- Sidebar Footer / User Profile -->
+        <div class="sidebar-footer">
+            <div class="user-profile-menu">
+                <div class="user-avatar-badge">
+                    <span class="user-avatar-text">{{ (user.preferred_name or user.username)[0]|upper }}</span>
+                </div>
+                <div class="user-info">
+                    <span class="user-display-name">{{ user.preferred_name or user.username }}</span>
+                    <span class="user-status-pill">🌸 Online</span>
+                </div>
+                <div class="user-actions">
+                    <button class="icon-btn" id="openSettingsBtn" title="Settings & API Keys">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                    <a href="{{ url_for('logout') }}" class="icon-btn" title="Sign Out">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- SIDEBAR BACKDROP (Mobile) -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- MAIN CHAT CONTAINER -->
+    <main class="chat-main">
+        <!-- TOP NAVIGATION BAR -->
+        <header class="chat-topbar glass-panel">
+            <div class="topbar-left">
+                <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                
+                <!-- MODEL SELECTION DROPDOWN -->
+                <div class="model-selector-wrapper" id="modelSelectorWrapper">
+                    <button class="model-select-btn" id="modelSelectBtn">
+                        <span class="model-icon" id="currentModelIcon">💎</span>
+                        <span class="model-name" id="currentModelName">Gemini 3.8 Flash (Google)</span>
+                        <span class="model-badge badge-gemini" id="currentModelBadge">Active &amp; Fast</span>
+                        <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+                    </button>
+
+                    <!-- Dropdown Menu -->
+                    <div class="model-dropdown-menu custom-scrollbar" id="modelDropdownMenu">
+                        <div class="dropdown-header">
+                            <span>Select AI Brain 🪄</span>
+                        </div>
+                        <div class="models-list">
+                            {% for m in models %}
+                            <div class="model-option" 
+                                 data-id="{{ m.id }}" 
+                                 data-provider="{{ m.provider }}" 
+                                 data-name="{{ m.name }}" 
+                                 data-icon="{{ m.icon }}"
+                                 data-badge="{{ m.badge }}">
+                                <div class="model-opt-icon">{{ m.icon }}</div>
+                                <div class="model-opt-details">
+                                    <div class="model-opt-title">
+                                        <span class="opt-name">{{ m.name }}</span>
+                                        <span class="opt-badge badge-{{ m.provider }}">{{ m.badge }}</span>
+                                    </div>
+                                    <p class="model-opt-desc">{{ m.description }}</p>
+                                </div>
+                                <i class="fa-solid fa-check opt-check"></i>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="dropdown-footer">
+                            <button class="btn-link" id="dropdownConfigKeysBtn">
+                                <i class="fa-solid fa-key"></i> Add or manage API keys
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Topbar Right Controls -->
+            <div class="topbar-right">
+                <button class="topbar-pill-btn" id="keysModalTrigger" title="Configure API Keys">
+                    <i class="fa-solid fa-key"></i>
+                    <span class="hide-mobile">API Keys</span>
+                    <span class="key-indicator-dot" id="keyIndicatorDot"></span>
+                </button>
+
+                <div class="chat-actions-menu">
+                    <button class="icon-btn" id="renameChatTrigger" title="Rename Chat">
+                        <i class="fa-regular fa-pen-to-square"></i>
+                    </button>
+                    <button class="icon-btn" id="clearChatTrigger" title="Clear current messages">
+                        <i class="fa-regular fa-trash-can"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- CHAT MESSAGES SCROLL AREA -->
+        <section class="chat-feed custom-scrollbar" id="chatFeed">
+            <!-- WELCOME SCREEN (Shown when conversation is empty) -->
+            <div class="welcome-container" id="welcomeContainer">
+                <div class="welcome-luna-avatar animate-float">
+                    <span class="moon-large">🌙</span>
+                    <div class="sparkle-orbit orbit-1">✦</div>
+                    <div class="sparkle-orbit orbit-2">✦</div>
+                    <div class="sparkle-orbit orbit-3">✨</div>
+                </div>
+
+                <h1 class="welcome-title">
+                    Hello, <span class="gradient-text">{{ user.preferred_name or user.username }}</span> 🌸
+                </h1>
+                <p class="welcome-subtitle">
+                    I'm Luna, your aesthetic AI confidante. Ask me anything, explore new ideas, or craft beautiful code!
+                </p>
+
+                <!-- Model helper banner -->
+                <div class="model-status-card" id="modelStatusCard">
+                    <div class="status-card-icon">🪄</div>
+                    <div class="status-card-text">
+                        <strong>Ready with <span id="welcomeModelDisplay">Gemini 3.8 Flash (Google)</span></strong>
+                        <span id="welcomeKeyTip">Free & fast responses ready for you.</span>
+                    </div>
+                </div>
+
+                <!-- SUGGESTION CARDS -->
+                <div class="suggestions-grid">
+                    <div class="suggestion-card" data-prompt="Plan a relaxing, cozy self-care evening routine with skincare, a soothing drink, and ambient vibes 🌸🛁">
+                        <div class="sugg-icon">🌸</div>
+                        <div class="sugg-content">
+                            <h3>Self-Care & Wellness</h3>
+                            <p>Plan a cozy evening routine with skincare & soothing vibes</p>
+                        </div>
+                    </div>
+
+                    <div class="suggestion-card" data-prompt="Write a modern, elegant Python Flask script that handles user authentication with SQLite and bcrypt 💻✨">
+                        <div class="sugg-icon">💻</div>
+                        <div class="sugg-content">
+                            <h3>Full-Stack Code</h3>
+                            <p>Write an elegant Python Flask auth script with SQLite</p>
+                        </div>
+                    </div>
+
+                    <div class="suggestion-card" data-prompt="Help me brainstorm 5 unique aesthetic branding ideas with color palettes and mood boards for a floral coffee bar ☕🎨">
+                        <div class="sugg-icon">🎨</div>
+                        <div class="sugg-content">
+                            <h3>Creative Brainstorm</h3>
+                            <p>5 aesthetic branding ideas with color palettes for a coffee bar</p>
+                        </div>
+                    </div>
+
+                    <div class="suggestion-card" data-prompt="Explain how neural networks learn in simple, beautiful analogies that feel intuitive and clear 🌙🧠">
+                        <div class="sugg-icon">🌙</div>
+                        <div class="sugg-content">
+                            <h3>Intuitive Learning</h3>
+                            <p>Explain how neural networks learn with intuitive analogies</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MESSAGES CONTAINER -->
+            <div class="messages-list" id="messagesList"></div>
+
+            <!-- TYPING / GENERATING INDICATOR -->
+            <div class="typing-indicator-wrapper" id="typingIndicator" style="display: none;">
+                <div class="luna-msg-avatar">🌙</div>
+                <div class="typing-bubble">
+                    <span class="typing-text">Luna is thinking</span>
+                    <span class="dot dot-1"></span>
+                    <span class="dot dot-2"></span>
+                    <span class="dot dot-3"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- BOTTOM INPUT COMPOSER -->
+        <footer class="chat-input-container">
+            <form class="input-form glass-panel" id="chatForm">
+                <textarea 
+                    id="messageInput" 
+                    placeholder="Message Luna... (Shift+Enter for new line) 🌸" 
+                    rows="1" 
+                    required></textarea>
+                
+                <div class="input-actions">
+                    <button type="button" class="icon-btn clear-text-btn" id="clearInputBtn" title="Clear text" style="display: none;">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                    <button type="submit" class="send-btn shadow-glow" id="sendBtn" title="Send message">
+                        <i class="fa-solid fa-arrow-up"></i>
+                    </button>
+                </div>
+            </form>
+            <div class="input-footer-note">
+                <span>Luna can make mistakes. Remember to double-check important info ✨</span>
+            </div>
+        </footer>
+    </main>
+</div>
+
+<!-- ================= MODALS ================= -->
+
+<!-- 1. SETTINGS & API KEYS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+    <div class="modal-box glass-panel animate-scale-up">
+        <div class="modal-header">
+            <div class="modal-title-wrap">
+                <span class="modal-icon">⚙️</span>
+                <h2>Luna Settings & Keys</h2>
+            </div>
+            <button class="modal-close-btn" id="closeSettingsModalBtn">&times;</button>
+        </div>
+
+        <div class="modal-tabs">
+            <button class="tab-btn active" data-tab="tab-keys">
+                <i class="fa-solid fa-key"></i> Free API Keys
+            </button>
+            <button class="tab-btn" data-tab="tab-persona">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Luna Persona
+            </button>
+            <button class="tab-btn" data-tab="tab-about">
+                <i class="fa-solid fa-moon"></i> About
+            </button>
+        </div>
+
+        <div class="modal-body custom-scrollbar">
+            <!-- TAB 1: API KEYS -->
+            <div class="tab-content active" id="tab-keys">
+                <div class="info-alert">
+                    <i class="fa-solid fa-shield-heart alert-icon"></i>
+                    <div>
+                        <strong>100% Private & Free:</strong> Keys are stored safely in your personal SQLite database on your device.
+                    </div>
+                </div>
+
+                <!-- Groq Key -->
+                <div class="key-field-group">
+                    <div class="key-header">
+                        <div class="provider-label">
+                            <span class="provider-emoji">⚡</span>
+                            <div>
+                                <span class="provider-name">Groq API Key (Llama 3.3 70B & Mixtral)</span>
+                                <span class="provider-tag free-tag">Recommended • Generous Free Tier</span>
+                            </div>
+                        </div>
+                        <a href="https://console.groq.com/keys" target="_blank" rel="noopener" class="get-key-link">
+                            Get Free Key <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-bolt input-icon"></i>
+                        <input type="password" id="groqApiKeyInput" placeholder="gsk_..." autocomplete="off">
+                        <span class="key-status-badge" id="groqStatusBadge">Checking...</span>
+                    </div>
+                </div>
+
+                <!-- Google Gemini Key -->
+                <div class="key-field-group">
+                    <div class="key-header">
+                        <div class="provider-label">
+                            <span class="provider-emoji">💎</span>
+                            <div>
+                                <span class="provider-name">Google Gemini API Key (1.5 Flash / 2.0)</span>
+                                <span class="provider-tag free-tag">Free Tier via AI Studio</span>
+                            </div>
+                        </div>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="get-key-link">
+                            Get Free Key <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-gem input-icon"></i>
+                        <input type="password" id="geminiApiKeyInput" placeholder="AIzaSy..." autocomplete="off">
+                        <span class="key-status-badge" id="geminiStatusBadge">Checking...</span>
+                    </div>
+                </div>
+
+                <!-- OpenRouter Key -->
+                <div class="key-field-group">
+                    <div class="key-header">
+                        <div class="provider-label">
+                            <span class="provider-emoji">🌙</span>
+                            <div>
+                                <span class="provider-name">OpenRouter API Key (Free Models)</span>
+                                <span class="provider-tag free-tag">Free & Low-cost Hub</span>
+                            </div>
+                        </div>
+                        <a href="https://openrouter.ai/keys" target="_blank" rel="noopener" class="get-key-link">
+                            Get Free Key <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                    <div class="input-with-icon">
+                        <i class="fa-solid fa-moon input-icon"></i>
+                        <input type="password" id="openrouterApiKeyInput" placeholder="sk-or-..." autocomplete="off">
+                        <span class="key-status-badge" id="openrouterStatusBadge">Checking...</span>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="saveKeysBtn">
+                        <i class="fa-solid fa-check"></i> Save API Keys
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 2: PERSONA -->
+            <div class="tab-content" id="tab-persona">
+                <div class="form-group">
+                    <label for="personaNickname">Your Nickname (What Luna calls you)</label>
+                    <input type="text" id="personaNickname" value="{{ user.preferred_name or user.username }}" placeholder="e.g. Pari, Angel 🌸">
+                </div>
+
+                <div class="form-group">
+                    <label>Luna's Personality Tone</label>
+                    <div class="persona-cards-grid">
+                        <label class="persona-radio-card">
+                            <input type="radio" name="persona_tone" value="girly_sweet" {% if user.persona_tone == 'girly_sweet' or not user.persona_tone %}checked{% endif %}>
+                            <div class="persona-card-body">
+                                <span class="persona-emoji">🌸</span>
+                                <h4>Sweet & Aesthetic</h4>
+                                <p>Gentle, warm, loving, with celestial and floral vibes ✨</p>
+                            </div>
+                        </label>
+
+                        <label class="persona-radio-card">
+                            <input type="radio" name="persona_tone" value="sassy_bestie" {% if user.persona_tone == 'sassy_bestie' %}checked{% endif %}>
+                            <div class="persona-card-body">
+                                <span class="persona-emoji">💅</span>
+                                <h4>Sassy Bestie</h4>
+                                <p>Stylish, witty, high-energy, fun and straight-talking 💖</p>
+                            </div>
+                        </label>
+
+                        <label class="persona-radio-card">
+                            <input type="radio" name="persona_tone" value="tech_genius" {% if user.persona_tone == 'tech_genius' %}checked{% endif %}>
+                            <div class="persona-card-body">
+                                <span class="persona-emoji">💻</span>
+                                <h4>Tech Hacker Girl</h4>
+                                <p>Super clean code, optimal algorithms, crisp explanations ⚡</p>
+                            </div>
+                        </label>
+
+                        <label class="persona-radio-card">
+                            <input type="radio" name="persona_tone" value="celestial_mystic" {% if user.persona_tone == 'celestial_mystic' %}checked{% endif %}>
+                            <div class="persona-card-body">
+                                <span class="persona-emoji">🌙</span>
+                                <h4>Celestial Mystic</h4>
+                                <p>Poetic, profound, starry, and intuitively wise 🔮</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="savePersonaBtn">
+                        <i class="fa-solid fa-heart"></i> Save Preferences
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 3: ABOUT -->
+            <div class="tab-content" id="tab-about">
+                <div class="about-container">
+                    <div class="about-brand">
+                        <span class="about-logo">🌙✨</span>
+                        <h3>Luna AI 1.0</h3>
+                        <p>Self-Hosted Multi-Provider Companion</p>
+                    </div>
+                    <div class="about-features">
+                        <div class="feat-item">
+                            <i class="fa-solid fa-code feat-icon"></i>
+                            <div>
+                                <strong>Python Flask + SQLite</strong>
+                                <span>Lightweight, private, self-contained architecture</span>
+                            </div>
+                        </div>
+                        <div class="feat-item">
+                            <i class="fa-solid fa-bolt feat-icon"></i>
+                            <div>
+                                <strong>Multi-Model Architecture</strong>
+                                <span>Groq (Llama 3.3), Google Gemini, OpenRouter & Local</span>
+                            </div>
+                        </div>
+                        <div class="feat-item">
+                            <i class="fa-solid fa-palette feat-icon"></i>
+                            <div>
+                                <strong>Aesthetic Girly Design</strong>
+                                <span>Dreamy pastels, glassmorphism, responsive interface</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. RENAME CHAT MODAL -->
+<div class="modal-overlay" id="renameModal">
+    <div class="modal-box modal-sm glass-panel animate-scale-up">
+        <div class="modal-header">
+            <h3>Rename Chat ✨</h3>
+            <button class="modal-close-btn" id="closeRenameModalBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label for="renameTitleInput">Conversation Title</label>
+                <input type="text" id="renameTitleInput" placeholder="Enter new title...">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelRenameBtn">Cancel</button>
+                <button class="btn btn-primary" id="confirmRenameBtn">Save Title</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3. DELETE CHAT CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal-box modal-sm glass-panel animate-scale-up">
+        <div class="modal-header">
+            <h3>Delete Chat 🗑️</h3>
+            <button class="modal-close-btn" id="closeDeleteModalBtn">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this conversation? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Keep It</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete Forever</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initial server state passed to JavaScript
+    window.LUNA_USER = {
+        id: {{ user.id }},
+        username: "{{ user.username }}",
+        preferredName: "{{ user.preferred_name or user.username }}",
+        personaTone: "{{ user.persona_tone or 'girly_sweet' }}"
+    };
+    window.LUNA_MODELS = {{ models|tojson }};
+    window.LUNA_KEYS_STATUS = {{ keys_status|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+{% endblock %}
