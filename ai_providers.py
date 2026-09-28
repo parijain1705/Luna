@@ -36,7 +36,7 @@ AVAILABLE_MODELS = [
         "name": "Gemini 3.8 Flash (Google)",
         "provider": "gemini",
         "badge": "Active & Fast",
-        "icon": "💎",
+        "icon": "fa-solid fa-gem",
         "description": "Google's latest flagship high-speed reasoning model."
     },
     {
@@ -44,7 +44,7 @@ AVAILABLE_MODELS = [
         "name": "Gemini Flash Latest (Google)",
         "provider": "gemini",
         "badge": "Always Up-to-Date",
-        "icon": "✨",
+        "icon": "fa-solid fa-bolt-lightning",
         "description": "Auto-updated to the newest available Gemini Flash release."
     },
     {
@@ -52,7 +52,7 @@ AVAILABLE_MODELS = [
         "name": "Groq Flagship 120B (Groq)",
         "provider": "groq",
         "badge": "Ultra Fast",
-        "icon": "⚡",
+        "icon": "fa-solid fa-bolt",
         "description": "Blazing fast open weights model hosted on Groq LPU."
     },
     {
@@ -60,7 +60,7 @@ AVAILABLE_MODELS = [
         "name": "Groq Instant 20B (Groq)",
         "provider": "groq",
         "badge": "Instant",
-        "icon": "🚀",
+        "icon": "fa-solid fa-gauge-high",
         "description": "Lightweight, instant inference for quick questions."
     },
     {
@@ -68,7 +68,7 @@ AVAILABLE_MODELS = [
         "name": "Nemotron 3.5 Free (OpenRouter)",
         "provider": "openrouter",
         "badge": "Free Tier",
-        "icon": "🌙",
+        "icon": "fa-solid fa-network-wired",
         "description": "Active free tier community model on OpenRouter."
     },
     {
@@ -76,7 +76,7 @@ AVAILABLE_MODELS = [
         "name": "Liquid LFM 2.5 Free (OpenRouter)",
         "provider": "openrouter",
         "badge": "Free Tier",
-        "icon": "🌸",
+        "icon": "fa-solid fa-layer-group",
         "description": "Efficient and quick free model on OpenRouter."
     },
     {
@@ -84,7 +84,7 @@ AVAILABLE_MODELS = [
         "name": "Luna Companion (Built-in Demo)",
         "provider": "builtin",
         "badge": "No Key Needed",
-        "icon": "💖",
+        "icon": "fa-solid fa-robot",
         "description": "Built-in Luna offline mode for instant chatting without keys."
     }
 ]

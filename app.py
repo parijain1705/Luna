@@ -69,7 +69,7 @@ def login():
         password = request.form.get('password', '').strip()
         
         if not login_input or not password:
-            flash('Please enter your username/email and password ✨', 'error')
+            flash('Please enter your username/email and password', 'error')
             return render_template('login.html', username_or_email=login_input)
             
         with get_db() as conn:
@@ -83,10 +83,10 @@ def login():
             if user and check_password_hash(user['password_hash'], password):
                 session['user_id'] = user['id']
                 session['username'] = user['username']
-                flash(f"Welcome back, {user['username']}! 🌙✨", 'success')
+                flash(f"Welcome back, {user['username']}! 🌙", 'success')
                 return redirect(url_for('index'))
             else:
-                flash('Invalid credentials. Please double-check and try again 🌸', 'error')
+                flash('Invalid credentials. Please double-check and try again', 'error')
                 return render_template('login.html', username_or_email=login_input)
                 
     return render_template('login.html')
@@ -103,11 +103,11 @@ def register():
         preferred_name = request.form.get('preferred_name', '').strip()
         
         if not username or not email or not password:
-            flash('All required fields must be filled out ✨', 'error')
+            flash('All required fields must be filled out', 'error')
             return render_template('register.html', username=username, email=email, preferred_name=preferred_name)
             
         if len(password) < 6:
-            flash('Password must be at least 6 characters long 🌸', 'error')
+            flash('Password must be at least 6 characters long', 'error')
             return render_template('register.html', username=username, email=email, preferred_name=preferred_name)
             
         password_hash = generate_password_hash(password)
@@ -123,10 +123,10 @@ def register():
                 
             session['user_id'] = user_id
             session['username'] = username
-            flash('Account created! Welcome to Luna ✨🌙', 'success')
+            flash('Account created! Welcome to Luna 🌙', 'success')
             return redirect(url_for('index'))
         except sqlite3.IntegrityError:
-            flash('That username or email is already registered! 🌸', 'error')
+            flash('That username or email is already registered!', 'error')
             return render_template('register.html', username=username, email=email, preferred_name=preferred_name)
             
     return render_template('register.html')
@@ -194,7 +194,7 @@ def create_conversation():
     user_id = session['user_id']
     data = request.get_json() or {}
     conv_id = str(uuid.uuid4())
-    title = data.get('title', 'New Chat ✨')
+    title = data.get('title', 'New Chat')
     model_provider = data.get('model_provider', 'groq')
     model_name = data.get('model_name', 'llama-3.3-70b-versatile')
     
@@ -359,7 +359,7 @@ def chat():
             user_name=preferred_name
         )
     except Exception as e:
-        reply_text = f"✨ **Luna encountered a hiccup**: {str(e)}\n\n*Check your API key in settings or try another model in the dropdown!* 🌸"
+        reply_text = f"**Luna encountered an issue**: {str(e)}\n\n*Check your API key in settings or try another model in the dropdown.*"
 
     # Save assistant reply and update conversation timestamp
     with get_db() as conn:
@@ -447,7 +447,7 @@ def save_keys():
                     # Clear key if empty string passed
                     cursor.execute("DELETE FROM user_keys WHERE user_id = ? AND provider = ?", (user_id, provider))
                     
-    return jsonify({'success': True, 'message': 'API keys updated successfully! ✨'})
+    return jsonify({'success': True, 'message': 'API keys updated successfully!'})
 
 @app.route('/api/settings/profile', methods=['POST'])
 @login_required
@@ -467,7 +467,7 @@ def update_profile():
             (preferred_name, persona_tone, user_id)
         )
         
-    return jsonify({'success': True, 'message': 'Preferences saved! 🌸'})
+    return jsonify({'success': True, 'message': 'Preferences saved!'})
 
 if __name__ == '__main__':
     print("[*] Luna AI is starting on http://127.0.0.1:5000")

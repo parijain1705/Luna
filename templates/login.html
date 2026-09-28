@@ -1,23 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Sign in to Luna 🌙✨{% endblock %}
+{% block title %}Sign in to Luna 🌙{% endblock %}
 
 {% block content %}
 <div class="auth-wrapper">
-    <!-- Celestial background ambient orbs -->
-    <div class="ambient-glow glow-1"></div>
-    <div class="ambient-glow glow-2"></div>
-    <div class="ambient-glow glow-3"></div>
-
     <div class="auth-card glass-panel animate-fade-in">
         <div class="auth-header">
             <div class="brand-badge">
                 <span class="moon-logo">🌙</span>
-                <span class="sparkle-star sparkle-1">✦</span>
-                <span class="sparkle-star sparkle-2">✦</span>
             </div>
             <h1 class="brand-title">Welcome to Luna</h1>
-            <p class="brand-subtitle">Your personal, aesthetic AI companion & confidante 🌸</p>
+            <p class="brand-subtitle">Your personal AI companion & confidante</p>
         </div>
 
         <form action="{{ url_for('login') }}" method="POST" class="auth-form" id="loginForm">
@@ -57,19 +50,19 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block shadow-glow">
+            <button type="submit" class="btn btn-primary btn-block">
                 <span>Sign In to Luna</span>
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <i class="fa-solid fa-arrow-right"></i>
             </button>
         </form>
 
         <div class="auth-footer">
-            <p>New here, bestie? <a href="{{ url_for('register') }}" class="link-highlight">Create an account ✨</a></p>
+            <p>New here? <a href="{{ url_for('register') }}" class="link-highlight">Create an account</a></p>
         </div>
 
         <div class="auth-model-pills">
             <span class="pill-mini"><i class="fa-solid fa-bolt"></i> Groq Llama 3.3</span>
-            <span class="pill-mini"><i class="fa-solid fa-gem"></i> Gemini 1.5</span>
+            <span class="pill-mini"><i class="fa-solid fa-gem"></i> Gemini</span>
             <span class="pill-mini"><i class="fa-solid fa-moon"></i> OpenRouter</span>
         </div>
     </div>

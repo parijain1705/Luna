@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             id: 'gemini-3.8-flash',
             provider: 'gemini',
             name: 'Gemini 3.8 Flash (Google)',
-            icon: '💎',
+            icon: 'fa-solid fa-gem',
             badge: 'Active & Fast'
         },
         keysStatus: window.LUNA_KEYS_STATUS || {},
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("Could not load saved model", e);
             }
         } else {
-            selectModel('gemini-3.8-flash', 'gemini', 'Gemini 3.8 Flash (Google)', '💎', 'Active & Fast', false);
+            selectModel('gemini-3.8-flash', 'gemini', 'Gemini 3.8 Flash (Google)', 'fa-solid fa-gem', 'Active & Fast', false);
         }
 
         updateKeyIndicatorDots();
@@ -195,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         elements.renameChatTrigger?.addEventListener('click', () => {
             if (!state.activeConversationId) {
-                showToast("Start a chat first before renaming! 🌸", "info");
+                showToast("Start a chat first before renaming!", "info");
                 return;
             }
             const activeConv = state.conversations.find(c => c.id === state.activeConversationId);
@@ -286,7 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.currentModel = { id, provider, name, icon, badge };
 
         // Update topbar UI
-        if (elements.currentModelIcon) elements.currentModelIcon.textContent = icon;
+        if (elements.currentModelIcon) elements.currentModelIcon.innerHTML = icon.startsWith('fa-') ? `<i class="${icon}"></i>` : icon;
         if (elements.currentModelName) elements.currentModelName.textContent = name;
         if (elements.currentModelBadge) {
             elements.currentModelBadge.textContent = badge;
@@ -309,15 +309,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (provider === 'builtin') {
                 elements.welcomeKeyTip.textContent = "Luna native offline assistant. No API key needed!";
             } else if (hasKey) {
-                elements.welcomeKeyTip.textContent = `✨ Connected & ready for fast answers with ${provider.toUpperCase()}.`;
+                elements.welcomeKeyTip.textContent = `Connected & ready for fast answers with ${provider.toUpperCase()}.`;
             } else {
-                elements.welcomeKeyTip.textContent = `💡 Tip: Add your free ${provider.toUpperCase()} key in API Keys for full power.`;
+                elements.welcomeKeyTip.textContent = `Tip: Add your free ${provider.toUpperCase()} key in API Keys for full power.`;
             }
         }
 
         if (save) {
             localStorage.setItem('luna_selected_model', JSON.stringify(state.currentModel));
-            showToast(`Switched to ${name} ✨`, 'success');
+            showToast(`Switched to ${name}`, 'success');
         }
     }
 
@@ -336,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error loading conversations:", err);
             elements.conversationsList.innerHTML = `
                 <div class="history-loading">
-                    <span>Could not load past memories 🌸</span>
+                    <span>Could not load past chats</span>
                 </div>
             `;
         }
@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!convs.length) {
             elements.conversationsList.innerHTML = `
                 <div class="history-loading">
-                    <span>No conversations yet. Say hi! 🌙</span>
+                    <span>No conversations yet. Start a new chat!</span>
                 </div>
             `;
             return;
@@ -508,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (err) {
             console.error("Error switching conversation:", err);
-            showToast("Failed to load that chat 🌸", "error");
+            showToast("Failed to load that chat", "error");
         }
     }
 
@@ -518,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const newTitle = elements.renameTitleInput.value.trim();
         if (!newTitle) {
-            showToast("Title cannot be empty! ✨", "error");
+            showToast("Title cannot be empty!", "error");
             return;
         }
 
@@ -537,9 +537,9 @@ document.addEventListener('DOMContentLoaded', () => {
             renderConversationsList(state.conversations);
             elements.renameModal.classList.remove('open');
             state.targetConvIdForAction = null;
-            showToast("Chat renamed successfully! 🌸", "success");
+            showToast("Chat renamed successfully!", "success");
         } catch (err) {
-            showToast("Could not rename chat 🌸", "error");
+            showToast("Could not rename chat", "error");
         }
     }
 
@@ -563,7 +563,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             state.targetConvIdForAction = null;
-            showToast("Chat deleted 🌙", "info");
+            showToast("Chat deleted", "info");
         } catch (err) {
             showToast("Could not delete chat", "error");
         }
@@ -632,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
             appendMessageUI('assistant', data.assistant_message.content, data.assistant_message.model);
         } catch (err) {
             console.error("Chat error:", err);
-            appendMessageUI('assistant', `✨ **Luna:** *${err.message || 'Something went wrong.'}* Please check your API keys or try again! 🌸`);
+            appendMessageUI('assistant', `**Luna:** *${err.message || 'Something went wrong.'}* Please check your API keys or try again.`);
         } finally {
             state.isSending = false;
             elements.typingIndicator.style.display = 'none';
@@ -663,7 +663,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 htmlContent = `<p>${escapeHtml(content)}</p>`;
             }
 
-            const modelDisplay = modelName ? `<span class="msg-model-tag">✨ ${modelName}</span>` : '';
+            const modelDisplay = modelName ? `<span class="msg-model-tag"><i class="fa-solid fa-microchip"></i> ${modelName}</span>` : '';
 
             row.innerHTML = `
                 <div class="msg-avatar luna-avatar">🌙</div>
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const copyMsgBtn = row.querySelector('.copy-msg-btn');
             copyMsgBtn?.addEventListener('click', () => {
                 navigator.clipboard.writeText(content).then(() => {
-                    showToast("Copied Luna's message to clipboard! ✨", "success");
+                    showToast("Copied message to clipboard!", "success");
                 });
             });
 
@@ -739,9 +739,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const cleanText = content.replace(/[*#`_~]/g, '');
                     const utterance = new SpeechSynthesisUtterance(cleanText);
                     utterance.rate = 1.0;
-                    utterance.pitch = 1.1; // Gentle sweet pitch for Luna
+                    utterance.pitch = 1.0;
                     window.speechSynthesis.speak(utterance);
-                    showToast("Reading aloud... 🌸", "info");
+                    showToast("Reading aloud...", "info");
                 } else {
                     showToast("Speech synthesis not supported in this browser.", "info");
                 }
@@ -858,7 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!res.ok) throw new Error("Could not save keys");
 
-            showToast("Keys saved safely in SQLite! ✨", "success");
+            showToast("Keys saved safely in SQLite!", "success");
 
             // Clear password inputs for security and refresh state
             elements.groqApiKeyInput.value = '';
@@ -895,7 +895,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.user.preferredName = nickname;
             state.user.personaTone = selectedTone;
 
-            showToast("Preferences saved! Luna updated her persona 🌸", "success");
+            showToast("Preferences saved!", "success");
             closeSettingsModal();
         } catch (err) {
             showToast("Failed to save preferences: " + err.message, "error");
@@ -911,10 +911,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function showToast(message, type = 'info') {
         const toast = document.createElement('div');
         toast.className = `toast toast-${type} animate-pop`;
-        const emoji = type === 'success' ? '🌸' : (type === 'error' ? '⚠️' : '✨');
+        const iconHtml = type === 'success' ? '<i class="fa-solid fa-circle-check"></i>' : (type === 'error' ? '<i class="fa-solid fa-triangle-exclamation"></i>' : '<i class="fa-solid fa-circle-info"></i>');
 
         toast.innerHTML = `
-            <span class="toast-icon">${emoji}</span>
+            <span class="toast-icon">${iconHtml}</span>
             <span class="toast-text">${escapeHtml(message)}</span>
             <button class="toast-close" type="button">&times;</button>
         `;

@@ -1,20 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Luna 🌙✨ Aesthetic AI Chat{% endblock %}
+{% block title %}Luna 🌙 AI Chat{% endblock %}
 
 {% block content %}
 <div class="app-layout" id="appLayout">
-    <!-- Ambient Celestial Glows -->
-    <div class="ambient-glow glow-chat-1"></div>
-    <div class="ambient-glow glow-chat-2"></div>
-
     <!-- LEFT SIDEBAR -->
     <aside class="sidebar" id="sidebar">
         <!-- Sidebar Header -->
         <div class="sidebar-header">
             <div class="sidebar-brand">
                 <span class="brand-icon">🌙</span>
-                <span class="brand-text">Luna <span class="brand-sparkle">AI</span></span>
+                <span class="brand-text">Luna</span>
             </div>
             <button class="sidebar-close-btn" id="sidebarCloseBtn" aria-label="Close Sidebar">
                 <i class="fa-solid fa-xmark"></i>
@@ -23,7 +19,7 @@
 
         <!-- New Chat Button -->
         <div class="sidebar-action">
-            <button class="btn btn-new-chat shadow-glow" id="newChatBtn">
+            <button class="btn btn-new-chat" id="newChatBtn">
                 <i class="fa-solid fa-plus"></i>
                 <span>New Chat</span>
                 <span class="shortcut-tag">Ctrl+K</span>
@@ -38,10 +34,10 @@
 
         <!-- Conversation History List -->
         <div class="sidebar-history custom-scrollbar" id="conversationsList">
-            <!-- Dynamic groups injected via JS (Today, Yesterday, Previous 7 Days, etc.) -->
+            <!-- Dynamic groups injected via JS -->
             <div class="history-loading">
                 <span class="mini-spinner"></span>
-                <span>Gathering memories...</span>
+                <span>Loading chats...</span>
             </div>
         </div>
 
@@ -53,7 +49,7 @@
                 </div>
                 <div class="user-info">
                     <span class="user-display-name">{{ user.preferred_name or user.username }}</span>
-                    <span class="user-status-pill">🌸 Online</span>
+                    <span class="user-status-pill"><span class="status-dot"></span> Online</span>
                 </div>
                 <div class="user-actions">
                     <button class="icon-btn" id="openSettingsBtn" title="Settings & API Keys">
@@ -82,7 +78,7 @@
                 <!-- MODEL SELECTION DROPDOWN -->
                 <div class="model-selector-wrapper" id="modelSelectorWrapper">
                     <button class="model-select-btn" id="modelSelectBtn">
-                        <span class="model-icon" id="currentModelIcon">💎</span>
+                        <span class="model-icon" id="currentModelIcon"><i class="fa-solid fa-gem"></i></span>
                         <span class="model-name" id="currentModelName">Gemini 3.8 Flash (Google)</span>
                         <span class="model-badge badge-gemini" id="currentModelBadge">Active &amp; Fast</span>
                         <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
@@ -91,7 +87,7 @@
                     <!-- Dropdown Menu -->
                     <div class="model-dropdown-menu custom-scrollbar" id="modelDropdownMenu">
                         <div class="dropdown-header">
-                            <span>Select AI Brain 🪄</span>
+                            <span>Select AI Model</span>
                         </div>
                         <div class="models-list">
                             {% for m in models %}
@@ -101,7 +97,7 @@
                                  data-name="{{ m.name }}" 
                                  data-icon="{{ m.icon }}"
                                  data-badge="{{ m.badge }}">
-                                <div class="model-opt-icon">{{ m.icon }}</div>
+                                <div class="model-opt-icon">{% if m.icon.startswith('fa-') %}<i class="{{ m.icon }}"></i>{% else %}{{ m.icon }}{% endif %}</div>
                                 <div class="model-opt-details">
                                     <div class="model-opt-title">
                                         <span class="opt-name">{{ m.name }}</span>
@@ -147,21 +143,18 @@
             <div class="welcome-container" id="welcomeContainer">
                 <div class="welcome-luna-avatar animate-float">
                     <span class="moon-large">🌙</span>
-                    <div class="sparkle-orbit orbit-1">✦</div>
-                    <div class="sparkle-orbit orbit-2">✦</div>
-                    <div class="sparkle-orbit orbit-3">✨</div>
                 </div>
 
                 <h1 class="welcome-title">
-                    Hello, <span class="gradient-text">{{ user.preferred_name or user.username }}</span> 🌸
+                    Hello, <span class="gradient-text">{{ user.preferred_name or user.username }}</span>
                 </h1>
                 <p class="welcome-subtitle">
-                    I'm Luna, your aesthetic AI confidante. Ask me anything, explore new ideas, or craft beautiful code!
+                    I'm Luna, your personal AI companion. Ask me anything, explore new ideas, or craft clean code.
                 </p>
 
                 <!-- Model helper banner -->
                 <div class="model-status-card" id="modelStatusCard">
-                    <div class="status-card-icon">🪄</div>
+                    <div class="status-card-icon"><i class="fa-solid fa-circle-check"></i></div>
                     <div class="status-card-text">
                         <strong>Ready with <span id="welcomeModelDisplay">Gemini 3.8 Flash (Google)</span></strong>
                         <span id="welcomeKeyTip">Free & fast responses ready for you.</span>
@@ -170,31 +163,31 @@
 
                 <!-- SUGGESTION CARDS -->
                 <div class="suggestions-grid">
-                    <div class="suggestion-card" data-prompt="Plan a relaxing, cozy self-care evening routine with skincare, a soothing drink, and ambient vibes 🌸🛁">
-                        <div class="sugg-icon">🌸</div>
+                    <div class="suggestion-card" data-prompt="Plan a relaxing, cozy self-care evening routine with skincare, a soothing drink, and ambient vibes">
+                        <div class="sugg-icon"><i class="fa-solid fa-spa"></i></div>
                         <div class="sugg-content">
                             <h3>Self-Care & Wellness</h3>
                             <p>Plan a cozy evening routine with skincare & soothing vibes</p>
                         </div>
                     </div>
 
-                    <div class="suggestion-card" data-prompt="Write a modern, elegant Python Flask script that handles user authentication with SQLite and bcrypt 💻✨">
-                        <div class="sugg-icon">💻</div>
+                    <div class="suggestion-card" data-prompt="Write a modern, elegant Python Flask script that handles user authentication with SQLite and bcrypt">
+                        <div class="sugg-icon"><i class="fa-solid fa-code"></i></div>
                         <div class="sugg-content">
                             <h3>Full-Stack Code</h3>
                             <p>Write an elegant Python Flask auth script with SQLite</p>
                         </div>
                     </div>
 
-                    <div class="suggestion-card" data-prompt="Help me brainstorm 5 unique aesthetic branding ideas with color palettes and mood boards for a floral coffee bar ☕🎨">
-                        <div class="sugg-icon">🎨</div>
+                    <div class="suggestion-card" data-prompt="Help me brainstorm 5 unique aesthetic branding ideas with color palettes and mood boards for a coffee bar">
+                        <div class="sugg-icon"><i class="fa-solid fa-lightbulb"></i></div>
                         <div class="sugg-content">
                             <h3>Creative Brainstorm</h3>
                             <p>5 aesthetic branding ideas with color palettes for a coffee bar</p>
                         </div>
                     </div>
 
-                    <div class="suggestion-card" data-prompt="Explain how neural networks learn in simple, beautiful analogies that feel intuitive and clear 🌙🧠">
+                    <div class="suggestion-card" data-prompt="Explain how neural networks learn in simple, intuitive analogies">
                         <div class="sugg-icon">🌙</div>
                         <div class="sugg-content">
                             <h3>Intuitive Learning</h3>
@@ -224,7 +217,7 @@
             <form class="input-form glass-panel" id="chatForm">
                 <textarea 
                     id="messageInput" 
-                    placeholder="Message Luna... (Shift+Enter for new line) 🌸" 
+                    placeholder="Message Luna... (Shift+Enter for new line)" 
                     rows="1" 
                     required></textarea>
                 
@@ -232,13 +225,13 @@
                     <button type="button" class="icon-btn clear-text-btn" id="clearInputBtn" title="Clear text" style="display: none;">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
-                    <button type="submit" class="send-btn shadow-glow" id="sendBtn" title="Send message">
+                    <button type="submit" class="send-btn" id="sendBtn" title="Send message">
                         <i class="fa-solid fa-arrow-up"></i>
                     </button>
                 </div>
             </form>
             <div class="input-footer-note">
-                <span>Luna can make mistakes. Remember to double-check important info ✨</span>
+                <span>Luna can make mistakes. Remember to double-check important info.</span>
             </div>
         </footer>
     </main>
@@ -251,7 +244,7 @@
     <div class="modal-box glass-panel animate-scale-up">
         <div class="modal-header">
             <div class="modal-title-wrap">
-                <span class="modal-icon">⚙️</span>
+                <span class="modal-icon"><i class="fa-solid fa-gear"></i></span>
                 <h2>Luna Settings & Keys</h2>
             </div>
             <button class="modal-close-btn" id="closeSettingsModalBtn">&times;</button>
@@ -283,7 +276,7 @@
                 <div class="key-field-group">
                     <div class="key-header">
                         <div class="provider-label">
-                            <span class="provider-emoji">⚡</span>
+                            <span class="provider-icon"><i class="fa-solid fa-bolt"></i></span>
                             <div>
                                 <span class="provider-name">Groq API Key (Llama 3.3 70B & Mixtral)</span>
                                 <span class="provider-tag free-tag">Recommended • Generous Free Tier</span>
@@ -304,7 +297,7 @@
                 <div class="key-field-group">
                     <div class="key-header">
                         <div class="provider-label">
-                            <span class="provider-emoji">💎</span>
+                            <span class="provider-icon"><i class="fa-solid fa-gem"></i></span>
                             <div>
                                 <span class="provider-name">Google Gemini API Key (1.5 Flash / 2.0)</span>
                                 <span class="provider-tag free-tag">Free Tier via AI Studio</span>
@@ -353,7 +346,7 @@
             <div class="tab-content" id="tab-persona">
                 <div class="form-group">
                     <label for="personaNickname">Your Nickname (What Luna calls you)</label>
-                    <input type="text" id="personaNickname" value="{{ user.preferred_name or user.username }}" placeholder="e.g. Pari, Angel 🌸">
+                    <input type="text" id="personaNickname" value="{{ user.preferred_name or user.username }}" placeholder="e.g. Pari">
                 </div>
 
                 <div class="form-group">
@@ -362,27 +355,27 @@
                         <label class="persona-radio-card">
                             <input type="radio" name="persona_tone" value="girly_sweet" {% if user.persona_tone == 'girly_sweet' or not user.persona_tone %}checked{% endif %}>
                             <div class="persona-card-body">
-                                <span class="persona-emoji">🌸</span>
+                                <span class="persona-icon"><i class="fa-solid fa-heart"></i></span>
                                 <h4>Sweet & Aesthetic</h4>
-                                <p>Gentle, warm, loving, with celestial and floral vibes ✨</p>
+                                <p>Gentle, warm, loving, and supportive tone</p>
                             </div>
                         </label>
 
                         <label class="persona-radio-card">
                             <input type="radio" name="persona_tone" value="sassy_bestie" {% if user.persona_tone == 'sassy_bestie' %}checked{% endif %}>
                             <div class="persona-card-body">
-                                <span class="persona-emoji">💅</span>
+                                <span class="persona-icon"><i class="fa-solid fa-comment-dots"></i></span>
                                 <h4>Sassy Bestie</h4>
-                                <p>Stylish, witty, high-energy, fun and straight-talking 💖</p>
+                                <p>Stylish, witty, high-energy, and direct</p>
                             </div>
                         </label>
 
                         <label class="persona-radio-card">
                             <input type="radio" name="persona_tone" value="tech_genius" {% if user.persona_tone == 'tech_genius' %}checked{% endif %}>
                             <div class="persona-card-body">
-                                <span class="persona-emoji">💻</span>
-                                <h4>Tech Hacker Girl</h4>
-                                <p>Super clean code, optimal algorithms, crisp explanations ⚡</p>
+                                <span class="persona-icon"><i class="fa-solid fa-terminal"></i></span>
+                                <h4>Tech Hacker</h4>
+                                <p>Clean code, optimal algorithms, crisp explanations</p>
                             </div>
                         </label>
 
@@ -391,7 +384,7 @@
                             <div class="persona-card-body">
                                 <span class="persona-emoji">🌙</span>
                                 <h4>Celestial Mystic</h4>
-                                <p>Poetic, profound, starry, and intuitively wise 🔮</p>
+                                <p>Poetic, profound, starry, and intuitively wise</p>
                             </div>
                         </label>
                     </div>
@@ -399,7 +392,7 @@
 
                 <div class="modal-actions">
                     <button class="btn btn-primary" id="savePersonaBtn">
-                        <i class="fa-solid fa-heart"></i> Save Preferences
+                        <i class="fa-solid fa-check"></i> Save Preferences
                     </button>
                 </div>
             </div>
@@ -408,8 +401,8 @@
             <div class="tab-content" id="tab-about">
                 <div class="about-container">
                     <div class="about-brand">
-                        <span class="about-logo">🌙✨</span>
-                        <h3>Luna AI 1.0</h3>
+                        <span class="about-logo">🌙</span>
+                        <h3>Luna AI</h3>
                         <p>Self-Hosted Multi-Provider Companion</p>
                     </div>
                     <div class="about-features">
@@ -430,8 +423,8 @@
                         <div class="feat-item">
                             <i class="fa-solid fa-palette feat-icon"></i>
                             <div>
-                                <strong>Aesthetic Girly Design</strong>
-                                <span>Dreamy pastels, glassmorphism, responsive interface</span>
+                                <strong>Sleek Modern Design</strong>
+                                <span>Clean dark mode, refined glassmorphism, responsive interface</span>
                             </div>
                         </div>
                     </div>
@@ -445,7 +438,7 @@
 <div class="modal-overlay" id="renameModal">
     <div class="modal-box modal-sm glass-panel animate-scale-up">
         <div class="modal-header">
-            <h3>Rename Chat ✨</h3>
+            <h3>Rename Chat</h3>
             <button class="modal-close-btn" id="closeRenameModalBtn">&times;</button>
         </div>
         <div class="modal-body">
@@ -465,7 +458,7 @@
 <div class="modal-overlay" id="deleteModal">
     <div class="modal-box modal-sm glass-panel animate-scale-up">
         <div class="modal-header">
-            <h3>Delete Chat 🗑️</h3>
+            <h3>Delete Chat</h3>
             <button class="modal-close-btn" id="closeDeleteModalBtn">&times;</button>
         </div>
         <div class="modal-body">
